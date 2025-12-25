@@ -1,0 +1,67 @@
+{
+  "name": "mailbreeze",
+  "version": "0.1.0",
+  "description": "Official JavaScript SDK for MailBreeze email platform",
+  "author": "MailBreeze",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check --write .",
+    "lint:ci": "biome ci .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run lint:ci && pnpm run typecheck && pnpm run test && pnpm run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
+    "@types/node": "^22.10.7",
+    "@vitest/coverage-v8": "^2.1.0",
+    "msw": "^2.7.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "mailbreeze",
+    "email",
+    "email-api",
+    "transactional-email",
+    "email-marketing",
+    "sdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mailbreeze/mailbreeze-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mailbreeze/mailbreeze-js/issues"
+  },
+  "homepage": "https://mailbreeze.com"
+}
