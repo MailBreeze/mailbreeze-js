@@ -58,10 +58,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mailbreeze/mailbreeze-js.git"
+    "url": "https://github.com/MailBreeze/mailbreeze-js.git"
   },
   "bugs": {
-    "url": "https://github.com/mailbreeze/mailbreeze-js/issues"
+    "url": "https://github.com/MailBreeze/mailbreeze-js/issues"
   },
   "homepage": "https://mailbreeze.com"
 }
