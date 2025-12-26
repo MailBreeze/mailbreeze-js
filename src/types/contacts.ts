@@ -1,6 +1,11 @@
 import type { ListParams } from "./common";
 
 /**
+ * Type of consent obtained from the contact (NDPR compliance).
+ */
+export type ConsentType = "explicit" | "implicit" | "legitimate_interest";
+
+/**
  * Parameters for creating a contact.
  */
 export interface CreateContactParams {
@@ -21,6 +26,18 @@ export interface CreateContactParams {
 
   /** Source of the contact (e.g., 'api', 'import', 'form') */
   source?: string;
+
+  /** Type of consent obtained (NDPR compliance) */
+  consentType?: ConsentType;
+
+  /** Where consent was collected (e.g., 'signup_form', 'import', 'api') */
+  consentSource?: string;
+
+  /** When consent was given (ISO 8601 datetime) */
+  consentTimestamp?: string;
+
+  /** IP address from which consent was given */
+  consentIpAddress?: string;
 }
 
 /**
@@ -38,6 +55,18 @@ export interface UpdateContactParams {
 
   /** Custom fields defined in the contact list */
   customFields?: Record<string, unknown>;
+
+  /** Type of consent obtained (NDPR compliance) */
+  consentType?: ConsentType;
+
+  /** Where consent was collected (e.g., 'signup_form', 'import', 'api') */
+  consentSource?: string;
+
+  /** When consent was given (ISO 8601 datetime) */
+  consentTimestamp?: string;
+
+  /** IP address from which consent was given */
+  consentIpAddress?: string;
 }
 
 /**
@@ -56,6 +85,14 @@ export interface Contact {
   updatedAt: string;
   subscribedAt?: string;
   unsubscribedAt?: string;
+  /** Type of consent obtained (NDPR compliance) */
+  consentType?: ConsentType | null;
+  /** Where consent was collected */
+  consentSource?: string;
+  /** When consent was given (ISO 8601 datetime) */
+  consentTimestamp?: string;
+  /** IP address from which consent was given */
+  consentIpAddress?: string;
 }
 
 /**
