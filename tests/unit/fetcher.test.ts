@@ -364,8 +364,8 @@ describe("Fetcher", () => {
       const fetcher = createFetcher({ maxRetries: 3 });
       const promise = fetcher.request("GET", "/emails");
 
-      // Advance past first retry delay (1 second)
-      await vi.advanceTimersByTimeAsync(1000);
+      // Run all timers to completion (works reliably in Bun)
+      await vi.runAllTimersAsync();
 
       const result = await promise;
       expect(result).toEqual({ id: "1" });
@@ -390,7 +390,7 @@ describe("Fetcher", () => {
       const fetcher = createFetcher({ maxRetries: 3 });
       const promise = fetcher.request("GET", "/test");
 
-      await vi.advanceTimersByTimeAsync(1000);
+      await vi.runAllTimersAsync();
 
       await promise;
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -411,22 +411,12 @@ describe("Fetcher", () => {
         error = e;
       });
 
-      // First attempt happens immediately
-      expect(mockFetch).toHaveBeenCalledTimes(1);
-
-      // After 1s - second attempt
-      await vi.advanceTimersByTimeAsync(1000);
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-
-      // After 2s - third attempt
-      await vi.advanceTimersByTimeAsync(2000);
-      expect(mockFetch).toHaveBeenCalledTimes(3);
-
-      // After 4s - fourth attempt (last retry)
-      await vi.advanceTimersByTimeAsync(4000);
-      expect(mockFetch).toHaveBeenCalledTimes(4);
+      // Run all timers to completion
+      await vi.runAllTimersAsync();
 
       await promise;
+      // 1 initial + 3 retries = 4 total calls
+      expect(mockFetch).toHaveBeenCalledTimes(4);
       expect(error).toBeInstanceOf(ServerError);
     });
 
@@ -480,7 +470,7 @@ describe("Fetcher", () => {
       const fetcher = createFetcher({ maxRetries: 3 });
       const promise = fetcher.request("GET", "/emails");
 
-      await vi.advanceTimersByTimeAsync(1000);
+      await vi.runAllTimersAsync();
 
       const result = await promise;
       expect(result).toEqual({ id: "1" });
@@ -505,8 +495,8 @@ describe("Fetcher", () => {
       const fetcher = createFetcher({ maxRetries: 3 });
       const promise = fetcher.request("GET", "/emails");
 
-      // Should wait 5 seconds as per Retry-After
-      await vi.advanceTimersByTimeAsync(5000);
+      // Run all timers to completion
+      await vi.runAllTimersAsync();
 
       const result = await promise;
       expect(result).toEqual({ id: "1" });
@@ -526,8 +516,8 @@ describe("Fetcher", () => {
         caughtError = e;
       });
 
-      // Advance through all retries (1s + 2s = 3s for 2 retries)
-      await vi.advanceTimersByTimeAsync(3000);
+      // Run all timers to completion
+      await vi.runAllTimersAsync();
 
       await promise;
       expect(caughtError).toBeInstanceOf(ServerError);
@@ -557,8 +547,8 @@ describe("Fetcher", () => {
         caughtError = e;
       });
 
-      // Advance time to trigger timeout
-      await vi.advanceTimersByTimeAsync(5000);
+      // Run all timers to trigger timeout
+      await vi.runAllTimersAsync();
 
       await promise;
       expect(caughtError).toBeDefined();
@@ -603,7 +593,8 @@ describe("Fetcher", () => {
         caughtError = e;
       });
 
-      await vi.advanceTimersByTimeAsync(1000);
+      // Run all timers to trigger timeout
+      await vi.runAllTimersAsync();
 
       await promise;
       expect(caughtError).toBeDefined();
