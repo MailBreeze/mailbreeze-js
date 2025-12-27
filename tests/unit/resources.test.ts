@@ -22,8 +22,7 @@ describe("Resources", () => {
     describe("send()", () => {
       it("should make POST request to /emails", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          id: "email_123",
-          status: "queued",
+          messageId: "msg_123",
         });
 
         const result = await emails.send({
@@ -47,7 +46,7 @@ describe("Resources", () => {
           undefined,
           undefined,
         );
-        expect(result.id).toBe("email_123");
+        expect(result.messageId).toBe("msg_123");
       });
 
       it("should normalize to array to single element", async () => {
@@ -129,7 +128,7 @@ describe("Resources", () => {
     describe("list()", () => {
       it("should make GET request to /emails", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          data: [],
+          emails: [],
           pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
         });
 
@@ -140,7 +139,7 @@ describe("Resources", () => {
 
       it("should pass filter params as query", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          data: [],
+          emails: [],
           pagination: { page: 1, limit: 10, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
         });
 
@@ -291,7 +290,7 @@ describe("Resources", () => {
     describe("list()", () => {
       it("should make GET request to /contact-lists", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          data: [],
+          lists: [],
           pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
         });
 
@@ -360,8 +359,9 @@ describe("Resources", () => {
     describe("stats()", () => {
       it("should make GET request to /contact-lists/:id/stats", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
+          totalContacts: 105,
           activeContacts: 100,
-          bouncedContacts: 5,
+          suppressedContacts: 5,
         });
 
         const result = await lists.stats("list_123");
@@ -425,7 +425,7 @@ describe("Resources", () => {
     describe("list()", () => {
       it("should make GET request with filters", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          data: [],
+          contacts: [],
           pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
         });
 
@@ -603,7 +603,7 @@ describe("Resources", () => {
       const emails = new Emails(mockFetcher);
 
       (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-        data: [{ id: "email_1" }, { id: "email_2" }],
+        emails: [{ id: "email_1" }, { id: "email_2" }],
         pagination: {
           page: 1,
           limit: 20,
@@ -626,7 +626,10 @@ describe("Resources", () => {
       const emails = new Emails(mockFetcher);
 
       // Simulate an array response (for backwards compatibility)
-      (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue([{ id: "email_1" }, { id: "email_2" }]);
+      (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
+        emails: [{ id: "email_1" }, { id: "email_2" }],
+        pagination: { page: 1, limit: 20, total: 2, totalPages: 1, hasNext: false, hasPrev: false },
+      });
 
       const result = await emails.list();
 
@@ -642,7 +645,7 @@ describe("Resources", () => {
       const emails = new Emails(mockFetcher, "domain_123");
 
       (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-        data: [],
+        emails: [],
         pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
       });
 

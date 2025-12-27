@@ -85,12 +85,15 @@ export class Contacts extends BaseResource {
 
     if (params?.status) query.status = params.status;
 
-    const response = await this._get<{ data: Contact[]; pagination: PaginatedList<Contact>["pagination"] }>(
+    const response = await this._get<{ contacts: Contact[]; pagination: PaginatedList<Contact>["pagination"] }>(
       "",
       Object.keys(query).length > 0 ? query : undefined,
     );
 
-    return this.extractPaginatedList(response);
+    return {
+      data: response.contacts,
+      pagination: response.pagination,
+    };
   }
 
   /**

@@ -61,11 +61,14 @@ export class Lists extends BaseResource {
    * ```
    */
   async list(params?: ListListsParams): Promise<PaginatedList<ContactList>> {
-    const response = await this._get<{ data: ContactList[]; pagination: PaginatedList<ContactList>["pagination"] }>(
+    const response = await this._get<{ lists: ContactList[]; pagination: PaginatedList<ContactList>["pagination"] }>(
       "/contact-lists",
       this.listParamsToQuery(params),
     );
-    return this.extractPaginatedList(response);
+    return {
+      data: response.lists,
+      pagination: response.pagination,
+    };
   }
 
   /**

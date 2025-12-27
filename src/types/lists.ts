@@ -58,10 +58,13 @@ export interface ContactList {
   id: string;
   name: string;
   description?: string;
-  customFields: CustomFieldDefinition[];
-  contactCount: number;
+  customFields?: CustomFieldDefinition[];
+  totalContacts: number;
+  activeContacts: number;
+  suppressedContacts: number;
+  tags?: string[];
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 /**
@@ -75,8 +78,5 @@ export type ListListsParams = ListParams;
 export interface ListStats {
   totalContacts: number;
   activeContacts: number;
-  unsubscribedContacts: number;
-  bouncedContacts: number;
-  complainedContacts: number;
   suppressedContacts: number;
 }

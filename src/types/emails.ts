@@ -48,17 +48,8 @@ export interface SendEmailParams {
  * Result of sending an email.
  */
 export interface SendEmailResult {
-  /** Unique email ID */
-  id: string;
-
-  /** Current status */
-  status: "queued" | "sent" | "delivered" | "bounced" | "failed";
-
-  /** Message ID (SMTP) */
-  messageId?: string;
-
-  /** Timestamp when queued */
-  createdAt: string;
+  /** Message ID (SMTP) - unique identifier for tracking */
+  messageId: string;
 }
 
 /**

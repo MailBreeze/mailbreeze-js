@@ -19,7 +19,7 @@ export interface VerifyEmailResult {
   isValid: boolean;
 
   /** Detailed result category */
-  result: "valid" | "invalid" | "risky" | "unknown";
+  result: "clean" | "dirty" | "valid" | "invalid" | "risky" | "unknown";
 
   /** Reason for the result */
   reason: string;

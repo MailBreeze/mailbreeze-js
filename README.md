@@ -219,7 +219,7 @@ Verify email addresses before sending.
 // Verify a single email
 const result = await mailbreeze.verification.verify({ email: "user@example.com" });
 console.log(result.isValid);
-console.log(result.result); // "valid", "invalid", "unknown"
+console.log(result.result); // "clean", "dirty", "valid", "invalid", "risky", "unknown"
 
 // Batch verification (async)
 const batch = await mailbreeze.verification.batch({

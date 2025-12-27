@@ -38,7 +38,7 @@ export class Emails extends BaseResource {
    *   subject: "Hello",
    *   html: "<p>Hello World!</p>",
    * });
-   * console.log(result.id); // email_xxx
+   * console.log(result.messageId); // msg_xxx
    * ```
    */
   async send(params: SendEmailParams): Promise<SendEmailResult> {
@@ -86,12 +86,15 @@ export class Emails extends BaseResource {
     if (params?.startDate) query.startDate = params.startDate;
     if (params?.endDate) query.endDate = params.endDate;
 
-    const response = await this._get<{ data: Email[]; pagination: PaginatedList<Email>["pagination"] }>(
+    const response = await this._get<{ emails: Email[]; pagination: PaginatedList<Email>["pagination"] }>(
       "/emails",
       Object.keys(query).length > 0 ? query : undefined,
     );
 
-    return this.extractPaginatedList(response);
+    return {
+      data: response.emails,
+      pagination: response.pagination,
+    };
   }
 
   /**
