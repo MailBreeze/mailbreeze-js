@@ -1,6 +1,6 @@
 {
   "name": "mailbreeze",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "Official JavaScript SDK for MailBreeze email platform",
   "author": "MailBreeze",
   "license": "MIT",
