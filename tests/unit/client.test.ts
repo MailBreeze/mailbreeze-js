@@ -14,7 +14,6 @@ describe("MailBreeze Client", () => {
       expect(client.attachments).toBeDefined();
       expect(client.lists).toBeDefined();
       expect(client.verification).toBeDefined();
-      expect(client.automations).toBeDefined();
     });
 
     it("should create client with custom config", () => {
@@ -87,15 +86,6 @@ describe("MailBreeze Client", () => {
       expect(typeof client.verification.get).toBe("function");
       expect(typeof client.verification.list).toBe("function");
       expect(typeof client.verification.stats).toBe("function");
-    });
-
-    it("should initialize automations resource", () => {
-      const client = new MailBreeze({ apiKey: "sk_test_123" });
-      expect(client.automations).toBeDefined();
-      expect(typeof client.automations.enroll).toBe("function");
-      expect(client.automations.enrollments).toBeDefined();
-      expect(typeof client.automations.enrollments.list).toBe("function");
-      expect(typeof client.automations.enrollments.cancel).toBe("function");
     });
 
     it("should initialize contacts resource methods", () => {

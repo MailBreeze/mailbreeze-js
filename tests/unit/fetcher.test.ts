@@ -45,7 +45,7 @@ describe("Fetcher", () => {
       await fetcher.request("GET", "/emails/1");
 
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.mailbreeze.com/emails/1",
+        "https://api.mailbreeze.com/api/v1/emails/1",
         expect.objectContaining({
           headers: expect.objectContaining({
             "X-API-Key": "sk_test_123456",
@@ -137,7 +137,7 @@ describe("Fetcher", () => {
       await fetcher.request("GET", "/emails", undefined, { page: 1, limit: 10, status: "sent" });
 
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.mailbreeze.com/emails?page=1&limit=10&status=sent",
+        "https://api.mailbreeze.com/api/v1/emails?page=1&limit=10&status=sent",
         expect.anything(),
       );
     });
@@ -153,7 +153,7 @@ describe("Fetcher", () => {
       const fetcher = createFetcher();
       await fetcher.request("GET", "/emails", undefined, { page: 1, status: undefined });
 
-      expect(mockFetch).toHaveBeenCalledWith("https://api.mailbreeze.com/emails?page=1", expect.anything());
+      expect(mockFetch).toHaveBeenCalledWith("https://api.mailbreeze.com/api/v1/emails?page=1", expect.anything());
     });
 
     it("should set idempotency key header when provided", async () => {
@@ -635,7 +635,7 @@ describe("Fetcher", () => {
       });
       await fetcher.request("GET", "/emails");
 
-      expect(mockFetch).toHaveBeenCalledWith("https://api.mailbreeze.com/emails", expect.anything());
+      expect(mockFetch).toHaveBeenCalledWith("https://api.mailbreeze.com/api/v1/emails", expect.anything());
     });
 
     it("should handle path without leading slash", async () => {
@@ -649,7 +649,7 @@ describe("Fetcher", () => {
       const fetcher = createFetcher();
       await fetcher.request("GET", "emails");
 
-      expect(mockFetch).toHaveBeenCalledWith("https://api.mailbreeze.com/emails", expect.anything());
+      expect(mockFetch).toHaveBeenCalledWith("https://api.mailbreeze.com/api/v1/emails", expect.anything());
     });
 
     it("should handle special characters in query params", async () => {

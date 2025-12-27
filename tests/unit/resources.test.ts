@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Fetcher } from "../../src/http/fetcher";
-import { Attachments, Automations, Contacts, Emails, Lists, Verification } from "../../src/resources";
+import { Attachments, Contacts, Emails, Lists, Verification } from "../../src/resources";
 
 // Create a mock fetcher factory
 function createMockFetcher() {
@@ -178,13 +178,17 @@ describe("Resources", () => {
     describe("stats()", () => {
       it("should make GET request to /emails/stats", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          deliveryRate: 0.98,
+          stats: {
+            total: 100,
+            successRate: 98,
+          },
         });
 
         const result = await emails.stats();
 
         expect(mockFetcher.request).toHaveBeenCalledWith("GET", "/emails/stats", undefined, undefined, undefined);
-        expect(result.deliveryRate).toBe(0.98);
+        expect(result.total).toBe(100);
+        expect(result.successRate).toBe(98);
       });
     });
   });
@@ -199,7 +203,7 @@ describe("Resources", () => {
     });
 
     describe("createUpload()", () => {
-      it("should make POST request to /attachments/upload", async () => {
+      it("should make POST request to /attachments/presigned-url", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
           attachmentId: "att_123",
           uploadUrl: "https://upload.example.com/123",
@@ -215,11 +219,12 @@ describe("Resources", () => {
 
         expect(mockFetcher.request).toHaveBeenCalledWith(
           "POST",
-          "/attachments/upload",
+          "/attachments/presigned-url",
           {
-            fileName: "test.pdf",
+            filename: "test.pdf",
             contentType: "application/pdf",
-            fileSize: 1024,
+            size: 1024,
+            inline: undefined,
           },
           undefined,
           undefined,
@@ -229,7 +234,7 @@ describe("Resources", () => {
     });
 
     describe("confirm()", () => {
-      it("should make POST request to /attachments/confirm", async () => {
+      it("should make POST request to /attachments/:id/confirm", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
           id: "att_123",
           status: "uploaded",
@@ -241,8 +246,8 @@ describe("Resources", () => {
 
         expect(mockFetcher.request).toHaveBeenCalledWith(
           "POST",
-          "/attachments/confirm",
-          { uploadToken: "token_123" },
+          "/attachments/token_123/confirm",
+          {},
           undefined,
           undefined,
         );
@@ -317,7 +322,7 @@ describe("Resources", () => {
     });
 
     describe("update()", () => {
-      it("should make PATCH request to /contact-lists/:id", async () => {
+      it("should make PUT request to /contact-lists/:id", async () => {
         (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
           id: "list_123",
           name: "Updated List",
@@ -326,7 +331,7 @@ describe("Resources", () => {
         const result = await lists.update("list_123", { name: "Updated List" });
 
         expect(mockFetcher.request).toHaveBeenCalledWith(
-          "PATCH",
+          "PUT",
           "/contact-lists/list_123",
           { name: "Updated List" },
           undefined,
@@ -501,7 +506,7 @@ describe("Resources", () => {
           result: "valid",
         });
 
-        const result = await verification.verify("test@example.com");
+        const result = await verification.verify({ email: "test@example.com" });
 
         expect(mockFetcher.request).toHaveBeenCalledWith(
           "POST",
@@ -588,74 +593,6 @@ describe("Resources", () => {
           undefined,
         );
         expect(result.totalVerified).toBe(1000);
-      });
-    });
-  });
-
-  describe("Automations", () => {
-    let mockFetcher: Fetcher;
-    let automations: Automations;
-
-    beforeEach(() => {
-      mockFetcher = createMockFetcher();
-      automations = new Automations(mockFetcher);
-    });
-
-    describe("enroll()", () => {
-      it("should make POST request to enroll contact", async () => {
-        (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          enrollmentId: "enroll_123",
-          status: "active",
-        });
-
-        const result = await automations.enroll({
-          automationId: "auto_welcome",
-          contactId: "contact_123",
-          variables: { couponCode: "WELCOME10" },
-        });
-
-        expect(mockFetcher.request).toHaveBeenCalledWith(
-          "POST",
-          "/automations/auto_welcome/enroll",
-          { contactId: "contact_123", variables: { couponCode: "WELCOME10" } },
-          undefined,
-          undefined,
-        );
-        expect(result.enrollmentId).toBe("enroll_123");
-      });
-    });
-
-    describe("enrollments.list()", () => {
-      it("should make GET request to /automation-enrollments", async () => {
-        (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          data: [],
-          pagination: { page: 1, limit: 20, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
-        });
-
-        await automations.enrollments.list({ automationId: "auto_123", status: "active" });
-
-        const call = (mockFetcher.request as ReturnType<typeof vi.fn>).mock.calls[0];
-        expect(call[1]).toBe("/automation-enrollments");
-        expect(call[3]).toEqual({ automationId: "auto_123", status: "active" });
-      });
-    });
-
-    describe("enrollments.cancel()", () => {
-      it("should make POST request to cancel enrollment", async () => {
-        (mockFetcher.request as ReturnType<typeof vi.fn>).mockResolvedValue({
-          cancelled: true,
-        });
-
-        const result = await automations.enrollments.cancel("enroll_123");
-
-        expect(mockFetcher.request).toHaveBeenCalledWith(
-          "POST",
-          "/automation-enrollments/enroll_123/cancel",
-          {},
-          undefined,
-          undefined,
-        );
-        expect(result.cancelled).toBe(true);
       });
     });
   });
