@@ -113,15 +113,17 @@ export class Emails extends BaseResource {
   /**
    * Get email statistics for the domain.
    *
-   * @returns Email statistics including delivery rates
+   * @returns Email statistics including success rate
    *
    * @example
    * ```ts
    * const stats = await mailbreeze.emails.stats();
-   * console.log(stats.deliveryRate); // 0.98
+   * console.log(stats.successRate); // 100
+   * console.log(stats.total); // 71
    * ```
    */
   async stats(): Promise<EmailStats> {
-    return this._get<EmailStats>("/emails/stats");
+    const response = await this._get<{ stats: EmailStats }>("/emails/stats");
+    return response.stats;
   }
 }

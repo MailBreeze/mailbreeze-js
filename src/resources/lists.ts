@@ -98,7 +98,7 @@ export class Lists extends BaseResource {
    * ```
    */
   async update(id: string, params: UpdateListParams): Promise<ContactList> {
-    return this._patch<ContactList>(`/contact-lists/${id}`, params);
+    return this._put<ContactList>(`/contact-lists/${id}`, params);
   }
 
   /**

@@ -64,7 +64,12 @@ export class Attachments extends BaseResource {
    * ```
    */
   async createUpload(params: CreateAttachmentUploadParams): Promise<CreateAttachmentUploadResult> {
-    return this._post<CreateAttachmentUploadResult>("/attachments/upload", params);
+    return this._post<CreateAttachmentUploadResult>("/attachments/presigned-url", {
+      filename: params.fileName,
+      contentType: params.contentType,
+      size: params.fileSize,
+      inline: params.inline,
+    });
   }
 
   /**
@@ -85,6 +90,8 @@ export class Attachments extends BaseResource {
    * ```
    */
   async confirm(params: ConfirmAttachmentParams): Promise<Attachment> {
-    return this._post<Attachment>("/attachments/confirm", params);
+    // Backend expects the attachment ID in the URL path
+    const attachmentId = params.uploadToken || params.attachmentId;
+    return this._post<Attachment>(`/attachments/${attachmentId}/confirm`, {});
   }
 }

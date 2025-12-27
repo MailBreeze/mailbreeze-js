@@ -105,14 +105,21 @@ export interface ListEmailsParams extends ListParams {
  * Email statistics.
  */
 export interface EmailStats {
+  /** Total emails sent */
+  total: number;
+
+  /** Successfully sent emails */
   sent: number;
-  delivered: number;
-  bounced: number;
-  opened: number;
-  clicked: number;
-  complained: number;
-  deliveryRate: number;
-  openRate: number;
-  clickRate: number;
-  bounceRate: number;
+
+  /** Failed emails */
+  failed: number;
+
+  /** Transactional emails count */
+  transactional: number;
+
+  /** Marketing emails count */
+  marketing: number;
+
+  /** Success rate percentage (0-100) */
+  successRate: number;
 }

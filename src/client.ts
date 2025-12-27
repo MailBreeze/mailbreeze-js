@@ -1,5 +1,5 @@
 import { Fetcher } from "./http/fetcher";
-import { Attachments, Automations, Contacts, Emails, Lists, Verification } from "./resources";
+import { Attachments, Contacts, Emails, Lists, Verification } from "./resources";
 import type { MailBreezeConfig } from "./types/common";
 
 const DEFAULT_BASE_URL = "https://api.mailbreeze.com";
@@ -56,11 +56,6 @@ export class MailBreeze {
    */
   public readonly verification: Verification;
 
-  /**
-   * Automation enrollment management.
-   */
-  public readonly automations: Automations;
-
   private readonly fetcher: Fetcher;
   private readonly domainId?: string;
 
@@ -103,7 +98,6 @@ export class MailBreeze {
     this.attachments = new Attachments(this.fetcher, this.domainId);
     this.lists = new Lists(this.fetcher, this.domainId);
     this.verification = new Verification(this.fetcher, this.domainId);
-    this.automations = new Automations(this.fetcher, this.domainId);
   }
 
   /**

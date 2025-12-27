@@ -16,7 +16,6 @@ export type {
   Attachment,
   BatchVerifyParams,
   BatchVerifyResult,
-  CancelEnrollmentResult,
   ConfirmAttachmentParams,
   Contact,
   ContactList,
@@ -31,13 +30,8 @@ export type {
   DomainContext,
   Email,
   EmailStats,
-  Enrollment,
-  // Automations
-  EnrollParams,
-  EnrollResult,
   ListContactsParams,
   ListEmailsParams,
-  ListEnrollmentsParams,
   ListListsParams,
   ListParams,
   ListStats,
@@ -55,5 +49,6 @@ export type {
   VerificationStats,
   VerificationStatus,
   // Verification
+  VerifyEmailParams,
   VerifyEmailResult,
 } from "./types";

@@ -10,6 +10,9 @@ export interface CreateAttachmentUploadParams {
 
   /** File size in bytes */
   fileSize: number;
+
+  /** Whether this is an inline attachment (embedded image) */
+  inline?: boolean;
 }
 
 /**
@@ -33,8 +36,11 @@ export interface CreateAttachmentUploadResult {
  * Parameters for confirming an attachment upload.
  */
 export interface ConfirmAttachmentParams {
-  /** Upload token received from createUpload */
-  uploadToken: string;
+  /** Upload token received from createUpload (same as attachmentId) */
+  uploadToken?: string;
+
+  /** Attachment ID (alternative to uploadToken) */
+  attachmentId?: string;
 }
 
 /**

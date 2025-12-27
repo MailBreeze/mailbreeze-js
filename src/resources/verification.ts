@@ -5,6 +5,7 @@ import type {
   PaginatedList,
   VerificationStats,
   VerificationStatus,
+  VerifyEmailParams,
   VerifyEmailResult,
 } from "../types";
 import { BaseResource } from "./base";
@@ -18,7 +19,7 @@ import { BaseResource } from "./base";
  * @example
  * ```ts
  * // Verify a single email
- * const result = await mailbreeze.verification.verify("user@example.com");
+ * const result = await mailbreeze.verification.verify({ email: "user@example.com" });
  * if (result.isValid) {
  *   // Safe to send
  * }
@@ -28,8 +29,10 @@ import { BaseResource } from "./base";
  *   emails: ["user1@example.com", "user2@example.com"],
  * });
  *
- * // Poll for results
- * const status = await mailbreeze.verification.get(batch.verificationId);
+ * // Poll for results (if async)
+ * if (batch.verificationId) {
+ *   const status = await mailbreeze.verification.get(batch.verificationId);
+ * }
  * ```
  */
 export class Verification extends BaseResource {
@@ -39,19 +42,19 @@ export class Verification extends BaseResource {
    * This is a synchronous operation - the result is returned immediately.
    * Results are cached for 24 hours.
    *
-   * @param email - Email address to verify
+   * @param params - Object containing email address to verify
    * @returns Verification result
    *
    * @example
    * ```ts
-   * const result = await mailbreeze.verification.verify("test@example.com");
+   * const result = await mailbreeze.verification.verify({ email: "test@example.com" });
    * console.log(result.isValid); // true
    * console.log(result.result); // "valid"
    * console.log(result.details?.isDisposable); // false
    * ```
    */
-  async verify(email: string): Promise<VerifyEmailResult> {
-    return this._post<VerifyEmailResult>("/email-verification/single", { email });
+  async verify(params: VerifyEmailParams): Promise<VerifyEmailResult> {
+    return this._post<VerifyEmailResult>("/email-verification/single", params);
   }
 
   /**

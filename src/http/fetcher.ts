@@ -1,6 +1,7 @@
 import { createErrorFromResponse, MailBreezeError, RateLimitError, ServerError } from "./errors";
 
 const SDK_VERSION = "0.1.0";
+const API_VERSION = "/api/v1";
 
 export interface FetcherConfig {
   apiKey: string;
@@ -185,7 +186,8 @@ export class Fetcher {
   private buildUrl(path: string, query?: Record<string, unknown>): string {
     // Ensure path starts with /
     const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-    const url = new URL(`${this.config.baseUrl}${normalizedPath}`);
+    // Prepend API version to all paths
+    const url = new URL(`${this.config.baseUrl}${API_VERSION}${normalizedPath}`);
 
     if (query) {
       for (const [key, value] of Object.entries(query)) {

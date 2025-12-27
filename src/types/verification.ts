@@ -1,6 +1,14 @@
 import type { ListParams } from "./common";
 
 /**
+ * Parameters for verifying a single email.
+ */
+export interface VerifyEmailParams {
+  /** Email address to verify */
+  email: string;
+}
+
+/**
  * Result of verifying a single email.
  */
 export interface VerifyEmailResult {
@@ -96,11 +104,21 @@ export interface ListVerificationsParams extends ListParams {
  * Verification statistics.
  */
 export interface VerificationStats {
+  /** Total emails verified */
   totalVerified: number;
-  valid: number;
-  invalid: number;
-  risky: number;
-  unknown: number;
-  cached: number;
-  creditsUsed: number;
+
+  /** Count of valid emails */
+  totalValid: number;
+
+  /** Count of invalid emails */
+  totalInvalid: number;
+
+  /** Count of unknown/unverifiable emails */
+  totalUnknown: number;
+
+  /** Total verification batches */
+  totalVerifications: number;
+
+  /** Percentage of valid emails (0-100) */
+  validPercentage: number;
 }

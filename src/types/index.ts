@@ -1,5 +1,4 @@
 export * from "./attachments";
-export * from "./automations";
 export * from "./common";
 export * from "./contacts";
 export * from "./emails";

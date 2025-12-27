@@ -40,7 +40,7 @@ const result = await mailbreeze.emails.send({
   html: "<h1>Welcome to our platform!</h1>",
 });
 
-console.log(result.id); // email_xxx
+console.log(result.messageId);
 ```
 
 ## Configuration
@@ -62,7 +62,7 @@ const mailbreeze = new MailBreeze({
 
 ### Emails
 
-Send and manage emails.
+Send and manage transactional emails.
 
 ```typescript
 // Send an email
@@ -90,7 +90,7 @@ const result = await mailbreeze.emails.send({
   attachmentIds: ["att_xxx"],
 });
 
-// List emails
+// List sent emails
 const { data, pagination } = await mailbreeze.emails.list({
   status: "delivered",
   page: 1,
@@ -98,11 +98,12 @@ const { data, pagination } = await mailbreeze.emails.list({
 });
 
 // Get email details
-const email = await mailbreeze.emails.get("email_xxx");
+const email = await mailbreeze.emails.get("msg_xxx");
 
 // Get email statistics
 const stats = await mailbreeze.emails.stats();
-console.log(stats.deliveryRate); // 0.98
+console.log(stats.successRate); // 100
+console.log(stats.total); // Total emails sent
 ```
 
 ### Attachments
@@ -111,21 +112,21 @@ Handle email attachments using a two-step upload process.
 
 ```typescript
 // Step 1: Create upload URL
-const { attachmentId, uploadUrl, uploadToken } = await mailbreeze.attachments.createUpload({
+const upload = await mailbreeze.attachments.createUpload({
   fileName: "report.pdf",
   contentType: "application/pdf",
   fileSize: 1024000,
 });
 
-// Step 2: Upload file directly to URL
-await fetch(uploadUrl, {
+// Step 2: Upload file directly to the presigned URL
+await fetch(upload.uploadUrl, {
   method: "PUT",
   body: fileBuffer,
   headers: { "Content-Type": "application/pdf" },
 });
 
 // Step 3: Confirm upload
-const attachment = await mailbreeze.attachments.confirm({ uploadToken });
+await mailbreeze.attachments.confirm({ attachmentId: upload.attachmentId });
 
 // Step 4: Use in email
 await mailbreeze.emails.send({
@@ -133,7 +134,7 @@ await mailbreeze.emails.send({
   to: "user@example.com",
   subject: "Your report",
   html: "<p>Please find the report attached.</p>",
-  attachmentIds: [attachmentId],
+  attachmentIds: [upload.attachmentId],
 });
 ```
 
@@ -168,7 +169,7 @@ await mailbreeze.lists.delete("list_xxx");
 
 // Get list statistics
 const stats = await mailbreeze.lists.stats("list_xxx");
-console.log(stats.activeContacts); // 1000
+console.log(stats.activeContacts);
 ```
 
 ### Contacts
@@ -176,7 +177,7 @@ console.log(stats.activeContacts); // 1000
 Manage contacts within a specific list.
 
 ```typescript
-// Get contacts for a list
+// Get contacts resource for a list
 const contacts = mailbreeze.contacts("list_xxx");
 
 // Create a contact
@@ -203,11 +204,11 @@ const updated = await contacts.update("contact_xxx", {
   customFields: { plan: "enterprise" },
 });
 
+// Suppress a contact (prevents receiving emails)
+await contacts.suppress("contact_xxx", "manual");
+
 // Delete a contact
 await contacts.delete("contact_xxx");
-
-// Suppress a contact
-await contacts.suppress("contact_xxx", "manual");
 ```
 
 ### Email Verification
@@ -216,17 +217,16 @@ Verify email addresses before sending.
 
 ```typescript
 // Verify a single email
-const result = await mailbreeze.verification.verify("user@example.com");
-console.log(result.isValid); // true
-console.log(result.result); // "valid"
-console.log(result.details?.isDisposable); // false
+const result = await mailbreeze.verification.verify({ email: "user@example.com" });
+console.log(result.isValid);
+console.log(result.result); // "valid", "invalid", "unknown"
 
-// Batch verification
+// Batch verification (async)
 const batch = await mailbreeze.verification.batch({
   emails: ["user1@example.com", "user2@example.com", "user3@example.com"],
 });
 
-// Check batch status
+// Check batch status (for async batches)
 const status = await mailbreeze.verification.get(batch.verificationId);
 if (status.status === "completed") {
   console.log(status.results);
@@ -241,30 +241,8 @@ const { data } = await mailbreeze.verification.list({
 
 // Get verification statistics
 const stats = await mailbreeze.verification.stats();
-console.log(`Verified: ${stats.totalVerified}, Valid: ${stats.valid}`);
-```
-
-### Automations
-
-Enroll contacts in automation workflows.
-
-```typescript
-// Enroll a contact in an automation
-const enrollment = await mailbreeze.automations.enroll({
-  automationId: "auto_welcome",
-  contactId: "contact_xxx",
-  variables: { couponCode: "WELCOME10" },
-});
-
-// List enrollments
-const { data } = await mailbreeze.automations.enrollments.list({
-  automationId: "auto_xxx",
-  status: "active",
-});
-
-// Cancel an enrollment
-const result = await mailbreeze.automations.enrollments.cancel("enroll_xxx");
-console.log(result.cancelled); // true
+console.log(`Verified: ${stats.totalVerified}, Valid: ${stats.totalValid}`);
+console.log(`Valid percentage: ${stats.validPercentage}%`);
 ```
 
 ## Error Handling
@@ -341,7 +319,6 @@ import type {
   Contact,
   ContactList,
   VerifyEmailResult,
-  Enrollment,
   PaginatedList,
 } from "mailbreeze";
 
